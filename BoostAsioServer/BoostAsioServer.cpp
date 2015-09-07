@@ -27,28 +27,35 @@ public:
 	{
 	}
 
+	// 명시적으로 복사 생성자 / 대입 연산자 disable 처리
 	handler_allocator(const handler_allocator&) = delete;
 	handler_allocator& operator=(const handler_allocator&) = delete;
 
+	// 할당
 	void* allocate(std::size_t size)
 	{
+		// 커스텀 메모리 사이즈 내에서 호출하는 것이면 바로 제공
 		if (!in_use_ && size < sizeof(storage_))
 		{
 			in_use_ = true;
 			return &storage_;
 		}
+		// 아니면 새로 할당
 		else
 		{
 			return ::operator new(size);
 		}
 	}
 
+	// 할당해제
 	void deallocate(void* pointer)
 	{
+		// 커스텀 메모리 반납이면 flag만 false로
 		if (pointer == &storage_)
 		{
 			in_use_ = false;
 		}
+		// 아니면 삭제
 		else
 		{
 			::operator delete(pointer);
