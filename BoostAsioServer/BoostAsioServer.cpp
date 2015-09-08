@@ -78,23 +78,25 @@ class custom_alloc_handler
 {
 public:
 	custom_alloc_handler(handler_allocator& a, Handler h)
-		: allocator_(a),
-		handler_(h)
+		: allocator_(a), handler_(h)
 	{
 	}
 
+	// 파라메터 바인딩
 	template <typename ...Args>
 	void operator()(Args&&... args)
 	{
 		handler_(std::forward<Args>(args)...);
 	}
 
+	// Asio allocator에 이 래핑클래스(의 멤버 handler_allocator) 등록
 	friend void* asio_handler_allocate(std::size_t size,
 		custom_alloc_handler<Handler>* this_handler)
 	{
 		return this_handler->allocator_.allocate(size);
 	}
 
+	// Asio deallocator에 이 래핑클래스(의 멤버 handler_allocator) 등록
 	friend void asio_handler_deallocate(void* pointer, std::size_t /*size*/,
 		custom_alloc_handler<Handler>* this_handler)
 	{
@@ -107,6 +109,7 @@ private:
 };
 
 // Helper function to wrap a handler object to add custom allocation.
+// 중간 함수
 template <typename Handler>
 inline custom_alloc_handler<Handler> make_custom_alloc_handler(
 	handler_allocator& a, Handler h)
@@ -114,11 +117,21 @@ inline custom_alloc_handler<Handler> make_custom_alloc_handler(
 	return custom_alloc_handler<Handler>(a, h);
 }
 
+//////////////////////////////////////////////////////////////////////////
+// 중간함수 -> 래핑클래스 리턴
+//
+// 래핑 클래스 -> Asio alloc / dealloc 중개 해줌
+//
+// alloc / dealloc -> handler_allocator 가 aligend_storage로 컨트롤 or 동적 할당
+//////////////////////////////////////////////////////////////////////////
+
+
 class session
 	: public std::enable_shared_from_this<session>
 {
 public:
 	session(tcp::socket socket)
+		// 소유권 이전(메모리 이동)
 		: socket_(std::move(socket))
 	{
 	}
@@ -131,30 +144,39 @@ public:
 private:
 	void do_read()
 	{
+		// weak_ptr
 		auto self(shared_from_this());
-		socket_.async_read_some(boost::asio::buffer(data_),
+
+		socket_.async_read_some(
+			// 버퍼
+			boost::asio::buffer(data_),
+
+			// Allocator
 			make_custom_alloc_handler(allocator_,
+				// Lambda 함수식 - 읽기 성공시 불려질 CallBack 함수
 				[this, self](boost::system::error_code ec, std::size_t length)
-		{
-			if (!ec)
-			{
-				do_write(length);
-			}
-		}));
+				{
+					if (!ec)
+					{
+						do_write(length);
+					}
+				}));
 	}
 
+	// 에코
 	void do_write(std::size_t length)
 	{
 		auto self(shared_from_this());
 		boost::asio::async_write(socket_, boost::asio::buffer(data_, length),
 			make_custom_alloc_handler(allocator_,
+				// Lambda 함수식 - 쓰기 성공하면 불려질 Callback 함수
 				[this, self](boost::system::error_code ec, std::size_t /*length*/)
-		{
-			if (!ec)
-			{
-				do_read();
-			}
-		}));
+				{
+					if (!ec)
+					{
+						do_read();
+					}
+				}));
 	}
 
 	// The socket used to communicate with the client.
@@ -171,8 +193,7 @@ class server
 {
 public:
 	server(boost::asio::io_service& io_service, short port)
-		: acceptor_(io_service, tcp::endpoint(tcp::v4(), port)),
-		socket_(io_service)
+		: acceptor_(io_service, tcp::endpoint(tcp::v4(), port)), socket_(io_service)
 	{
 		do_accept();
 	}
@@ -181,18 +202,23 @@ private:
 	void do_accept()
 	{
 		acceptor_.async_accept(socket_,
+			// Lambda 함수식 - accept 성공하면 불려질 Callback 함수
 			[this](boost::system::error_code ec)
-		{
-			if (!ec)
 			{
-				std::make_shared<session>(std::move(socket_))->start();
-			}
+				if (!ec)
+				{
+					// 정상적으로 accept 성공하면 session 생성해서 Start() { read -> write -> read -> write -> ... }
+					std::make_shared<session>(std::move(socket_))->start();
+				}
 
-			do_accept();
-		});
+				do_accept();
+			});
 	}
 
+	// listener
 	tcp::acceptor acceptor_;
+
+	// accepted socket -> session 으로 옮겨짐(std::move)
 	tcp::socket socket_;
 };
 
