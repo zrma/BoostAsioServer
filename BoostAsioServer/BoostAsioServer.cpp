@@ -6,9 +6,10 @@
 #include "Server.hpp"
 #include "ReferenceCountedServer.hpp"
 
+const char* port = "9999";
+
 void ServerTest()
 {
-	const char* port = "9999";
 	try
 	{
 		boost::asio::io_service io_service;
@@ -21,9 +22,24 @@ void ServerTest()
 	}
 }
 
+void ReferenceCountedServerTest()
+{
+	try
+	{
+		boost::asio::io_service io_service;
+		ReferenceCountedServer s(io_service, std::atoi(port));
+		io_service.run();
+	}
+	catch (std::exception& e)
+	{
+		std::cerr << "Exception: " << e.what() << "\n";
+	}
+}
+
 int main()
 {
-	ServerTest();
+	// ServerTest();
+	ReferenceCountedServerTest();
 
 	return 0;
 }
