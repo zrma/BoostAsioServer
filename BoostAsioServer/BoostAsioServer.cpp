@@ -6,6 +6,9 @@
 #include "Server.hpp"
 #include "ReferenceCountedServer.hpp"
 
+#include <boost/log/trivial.hpp>
+#include <boost/log/utility/setup/console.hpp>
+
 const char* port = "9999";
 
 void ServerTest()
@@ -39,7 +42,8 @@ void ReferenceCountedServerTest()
 int main()
 {
 	// ServerTest();
-	ReferenceCountedServerTest();
+	// ReferenceCountedServerTest();
+
 
 	return 0;
 }
