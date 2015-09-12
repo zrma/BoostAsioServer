@@ -81,7 +81,7 @@ private:
 			}
 			else
 			{
-				// 문제 생기면 무조건 자름
+				// 문제 생기면 무조건 끊어버림
 				socket_.close();
 			}
 		});
@@ -97,7 +97,6 @@ private:
 		{
 			if (!ec)
 			{
-				// 읽어온 메세지 스탠다드 콘솔 출력
 				std::cout.write(read_msg_.body(), read_msg_.body_length());
 				std::cout << "\n";
 

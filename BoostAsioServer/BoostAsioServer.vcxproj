@@ -147,6 +147,7 @@
   <ItemGroup>
     <ClInclude Include="ChatClient.hpp" />
     <ClInclude Include="ChatMessage.hpp" />
+    <ClInclude Include="ChatServer.hpp" />
     <ClInclude Include="ReferenceCountedServer.hpp" />
     <ClInclude Include="Server.hpp" />
     <ClInclude Include="stdafx.h" />
