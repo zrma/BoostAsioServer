@@ -145,10 +145,12 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AsyncTcpEchoServer.hpp" />
+    <ClInclude Include="AsyncUdpEchoServer.hpp" />
     <ClInclude Include="ChatClient.hpp" />
     <ClInclude Include="ChatMessage.hpp" />
     <ClInclude Include="ChatServer.hpp" />
-    <ClInclude Include="ReferenceCountedServer.hpp" />
+    <ClInclude Include="ReferenceCounted.hpp" />
     <ClInclude Include="Server.hpp" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />

@@ -16,8 +16,14 @@
     <Filter Include="Chat">
       <UniqueIdentifier>{f09271eb-aad7-4ca5-ba93-88abe45bae9f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Basic">
+    <Filter Include="Buffers">
       <UniqueIdentifier>{f5c9b315-2ba1-4fd4-a99a-32090f6bdd4e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Allocation">
+      <UniqueIdentifier>{5e0cb157-c8e1-4423-8d90-d8681aa0afed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Echo">
+      <UniqueIdentifier>{8773fc73-5ddc-4de2-a61d-77aa75ece463}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -30,12 +36,6 @@
     <ClInclude Include="targetver.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="ReferenceCountedServer.hpp">
-      <Filter>Basic</Filter>
-    </ClInclude>
-    <ClInclude Include="Server.hpp">
-      <Filter>Basic</Filter>
-    </ClInclude>
     <ClInclude Include="ChatMessage.hpp">
       <Filter>Chat</Filter>
     </ClInclude>
@@ -44,6 +44,18 @@
     </ClInclude>
     <ClInclude Include="ChatServer.hpp">
       <Filter>Chat</Filter>
+    </ClInclude>
+    <ClInclude Include="Server.hpp">
+      <Filter>Allocation</Filter>
+    </ClInclude>
+    <ClInclude Include="AsyncTcpEchoServer.hpp">
+      <Filter>Echo</Filter>
+    </ClInclude>
+    <ClInclude Include="ReferenceCounted.hpp">
+      <Filter>Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="AsyncUdpEchoServer.hpp">
+      <Filter>Echo</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

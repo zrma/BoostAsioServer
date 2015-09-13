@@ -4,24 +4,23 @@
 #include "stdafx.h"
 
 #include "Server.hpp"
-#include "ReferenceCountedServer.hpp"
+#include "ReferenceCounted.hpp"
 #include "ChatClient.hpp"
 #include "ChatServer.hpp"
-
-#include <boost/log/trivial.hpp>
-#include <boost/log/utility/setup/console.hpp>
+#include "AsyncTcpEchoServer.hpp"
+#include "AsyncUdpEchoServer.hpp"
 
 const char* ip = "127.0.0.1";
 const char* port = "9999";
 const char* port1 = "9001";
 const char* port2 = "9002";
 
-void ServerTest()
+void AllocationTest()
 {
 	try
 	{
 		boost::asio::io_service io_service;
-		server s(io_service, std::atoi(port));
+		Allocation::server s(io_service, std::atoi(port));
 		io_service.run();
 	}
 	catch (std::exception& e)
@@ -30,12 +29,12 @@ void ServerTest()
 	}
 }
 
-void ReferenceCountedServerTest()
+void ReferenceCountedTest()
 {
 	try
 	{
 		boost::asio::io_service io_service;
-		ReferenceCountedServer s(io_service, std::atoi(port));
+		ReferenceCounted::server s(io_service, std::atoi(port));
 		io_service.run();
 	}
 	catch (std::exception& e)
@@ -53,7 +52,7 @@ void ChatTest()
 		try
 		{
 			boost::asio::io_service io_service;
-			std::list<chat_server> servers;
+			std::list<Chat::chat_server> servers;
 
 			const char* ports[] = { port, port1, port2 };
 			size_t portCount = sizeof(ports) / sizeof(char*);
@@ -81,15 +80,15 @@ void ChatTest()
 
 		tcp::resolver resolver(io_service);
 		auto endpoint_iterator = resolver.resolve({ ip, port });
-		chat_client c(io_service, endpoint_iterator);
+		Chat::chat_client c(io_service, endpoint_iterator);
 
 		// 클라이언트 통신은 별개 스레드로 진행
 		std::thread t([&io_service]() { io_service.run(); });
 
-		char line[chat_message::max_body_length + 1];
-		while (std::cin.getline(line, chat_message::max_body_length + 1))
+		char line[Chat::chat_message::max_body_length + 1];
+		while (std::cin.getline(line, Chat::chat_message::max_body_length + 1))
 		{
-			chat_message msg;
+			Chat::chat_message msg;
 			msg.body_length(std::strlen(line));
 			std::memcpy(msg.body(), line, msg.body_length());
 			msg.encode_header();
@@ -105,12 +104,46 @@ void ChatTest()
 	}
 }
 
+void AsyncTcpEchoTest()
+{
+	try
+	{
+		boost::asio::io_service io_service;
+
+		AsyncTcpEcho::server s(io_service, std::atoi( port ));
+
+		io_service.run();
+	}
+	catch (std::exception& e)
+	{
+		std::cerr << "Exception: " << e.what() << "\n";
+	}
+}
+
+void AsyncUdpEchoTest()
+{
+	try
+	{
+		boost::asio::io_service io_service;
+
+		AsyncUdpEcho::server s(io_service, std::atoi( port ));
+
+		io_service.run();
+	}
+	catch (std::exception& e)
+	{
+		std::cerr << "Exception: " << e.what() << "\n";
+	}
+}
+
 int main()
 {
-	// ServerTest();
-	// ReferenceCountedServerTest();
+	// AllocationTest();
+	// ReferenceCountedTest();
+	// ChatTest();
 
-	ChatTest();
+	// AsyncTcpEchoTest();
+	// AsyncUdpEchoTest();
 
 	return 0;
 }
