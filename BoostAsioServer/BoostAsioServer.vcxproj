@@ -148,6 +148,7 @@
     <ClInclude Include="AsyncTcpEchoServer.hpp" />
     <ClInclude Include="AsyncUdpEchoServer.hpp" />
     <ClInclude Include="BlockingTcpEchoServer.hpp" />
+    <ClInclude Include="BlockingUdpEchoServer.hpp" />
     <ClInclude Include="ChatClient.hpp" />
     <ClInclude Include="ChatMessage.hpp" />
     <ClInclude Include="ChatServer.hpp" />
