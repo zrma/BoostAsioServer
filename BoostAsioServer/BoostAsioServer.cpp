@@ -9,6 +9,7 @@
 #include "ChatServer.hpp"
 #include "AsyncTcpEchoServer.hpp"
 #include "AsyncUdpEchoServer.hpp"
+#include "BlockingTcpEchoServer.hpp"
 
 const char* ip = "127.0.0.1";
 const char* port = "9999";
@@ -136,6 +137,70 @@ void AsyncUdpEchoTest()
 	}
 }
 
+enum { max_length = 1024 };
+
+void BlockingTcpEchoTest()
+{
+	// 서버 스레드를 클라이언트 스레드와 분리
+	std::thread serverThread = std::thread([&]()
+	{
+		// 서버 사이드
+		try
+		{
+			boost::asio::io_service io_service;
+
+			BlockingTcpEchoServer::server(io_service, std::atoi(port));
+		}
+		catch (std::exception& e)
+		{
+			std::cerr << "Exception: " << e.what() << "\n";
+		}
+	});
+
+	Sleep(5000);
+
+	// 클라이언트 사이드
+	try
+	{
+		for (;;)
+		{
+			boost::asio::io_service io_service;
+
+			tcp::socket s(io_service);
+			tcp::resolver resolver(io_service);
+			boost::asio::connect(s, resolver.resolve({ ip, port }));
+
+			// 서버가 accept를 중단했으면 클라이언트 루프 중지
+			//
+			// 루프 중지 하기 직전에 connect 하는 이유는 서버가 accept 단에서 block 상태로 대기 중인데, 
+			// 서버의 block 상태를 풀어줌으로써 서버 스레드를 진행(후 종료)시키기 위해서
+			if (BlockingTcpEchoServer::stopFlag)
+			{
+				break;
+			}
+
+			std::cout << "Enter message: ";
+			char request[max_length] = { 0, };
+			std::cin.getline(request, max_length);
+			size_t request_length = std::strlen(request);
+			boost::asio::write(s, boost::asio::buffer(request, request_length));
+
+			char reply[max_length];
+			size_t reply_length = boost::asio::read(s, boost::asio::buffer(reply, request_length));
+			std::cout << "Reply is: ";
+			std::cout.write(reply, reply_length);
+			std::cout << "\n";
+		}		
+	}
+	catch (std::exception& e)
+	{
+		std::cerr << "Exception: " << e.what() << "\n";
+	}
+
+	// 서버 스레드 종료 대기
+	serverThread.join();
+}
+
 int main()
 {
 	// AllocationTest();
@@ -144,6 +209,7 @@ int main()
 
 	// AsyncTcpEchoTest();
 	// AsyncUdpEchoTest();
+	BlockingTcpEchoTest();
 
 	return 0;
 }

@@ -57,6 +57,9 @@
     <ClInclude Include="AsyncUdpEchoServer.hpp">
       <Filter>Echo</Filter>
     </ClInclude>
+    <ClInclude Include="BlockingTcpEchoServer.hpp">
+      <Filter>Echo</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
