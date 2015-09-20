@@ -63,6 +63,9 @@
     <ClInclude Include="BlockingUdpEchoServer.hpp">
       <Filter>Echo</Filter>
     </ClInclude>
+    <ClInclude Include="DaytimeClient.hpp">
+      <Filter>Echo</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

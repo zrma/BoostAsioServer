@@ -152,6 +152,7 @@
     <ClInclude Include="ChatClient.hpp" />
     <ClInclude Include="ChatMessage.hpp" />
     <ClInclude Include="ChatServer.hpp" />
+    <ClInclude Include="DaytimeClient.hpp" />
     <ClInclude Include="ReferenceCounted.hpp" />
     <ClInclude Include="Server.hpp" />
     <ClInclude Include="stdafx.h" />

@@ -14,6 +14,8 @@
 #include "BlockingTcpEchoServer.hpp"
 #include "BlockingUdpEchoServer.hpp"
 
+#include "DaytimeClient.hpp"
+
 const char* ip = "127.0.0.1";
 const char* port = "9999";
 const char* port1 = "9001";
@@ -259,6 +261,48 @@ void BlockingUdpEchoTest()
 	serverThread.join();
 }
 
+void DaytimeClientTest()
+{
+	boost::asio::io_service io_service_for_server;
+	boost::asio::io_service::work work_for_server(io_service_for_server);
+
+	// 서버 스레드를 클라이언트 스레드와 분리
+	std::thread serverThread = std::thread([&]()
+	{
+		try
+		{
+			AsyncUdpEcho::server s(io_service_for_server, std::atoi(port));
+
+			io_service_for_server.run();
+		}
+		catch (std::exception& e)
+		{
+			std::cerr << "Exception: " << e.what() << "\n";
+		}
+	});
+
+	try
+	{		
+		// We run the io_service off in its own thread so that it operates
+		// completely asynchronously with respect to the rest of the program.
+		boost::asio::io_service io_service;
+		boost::asio::io_service::work work(io_service);
+		std::thread thread([&io_service]() { io_service.run(); });
+
+		DaytimeClient::get_daytime(io_service, ip);
+
+		io_service.stop();
+		thread.join();
+
+		io_service_for_server.stop();
+		serverThread.join();
+	}
+	catch (std::exception& e)
+	{
+		std::cerr << e.what() << std::endl;
+	}
+}
+
 int main()
 {
 	// AllocationTest();
@@ -268,7 +312,8 @@ int main()
 	// AsyncTcpEchoTest();
 	// AsyncUdpEchoTest();
 	// BlockingTcpEchoTest();
-	BlockingUdpEchoTest();
+	// BlockingUdpEchoTest();
+	DaytimeClientTest();
 
 	return 0;
 }
