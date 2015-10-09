@@ -1,17 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="헤더 파일">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
-    </Filter>
     <Filter Include="리소스 파일">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-    <Filter Include="TestCase">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
     <Filter Include="Chat">
       <UniqueIdentifier>{f09271eb-aad7-4ca5-ba93-88abe45bae9f}</UniqueIdentifier>
@@ -25,17 +17,17 @@
     <Filter Include="Echo">
       <UniqueIdentifier>{8773fc73-5ddc-4de2-a61d-77aa75ece463}</UniqueIdentifier>
     </Filter>
+    <Filter Include="HTTP">
+      <UniqueIdentifier>{96d8a636-ef89-4ff6-bc04-f7359fb3f506}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Main">
+      <UniqueIdentifier>{3de119e7-0249-4231-b2e1-df498971b54f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="stdafx.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="targetver.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="ChatMessage.hpp">
       <Filter>Chat</Filter>
     </ClInclude>
@@ -66,14 +58,60 @@
     <ClInclude Include="DaytimeClient.hpp">
       <Filter>Echo</Filter>
     </ClInclude>
+    <ClInclude Include="Connection.hpp">
+      <Filter>HTTP</Filter>
+    </ClInclude>
+    <ClInclude Include="ConnectionManager.hpp">
+      <Filter>HTTP</Filter>
+    </ClInclude>
+    <ClInclude Include="Header.hpp">
+      <Filter>HTTP</Filter>
+    </ClInclude>
+    <ClInclude Include="MimeTypes.hpp">
+      <Filter>HTTP</Filter>
+    </ClInclude>
+    <ClInclude Include="Reply.hpp">
+      <Filter>HTTP</Filter>
+    </ClInclude>
+    <ClInclude Include="Request.hpp">
+      <Filter>HTTP</Filter>
+    </ClInclude>
+    <ClInclude Include="RequestHandler.hpp">
+      <Filter>HTTP</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="RequestParser.hpp" />
+    <ClInclude Include="HttpServer.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="stdafx.cpp">
-      <Filter>TestCase</Filter>
+    <ClCompile Include="Connection.cpp">
+      <Filter>HTTP</Filter>
+    </ClCompile>
+    <ClCompile Include="ConnectionManager.cpp">
+      <Filter>HTTP</Filter>
+    </ClCompile>
+    <ClCompile Include="MimeTypes.cpp">
+      <Filter>HTTP</Filter>
+    </ClCompile>
+    <ClCompile Include="Reply.cpp">
+      <Filter>HTTP</Filter>
+    </ClCompile>
+    <ClCompile Include="RequestHandler.cpp">
+      <Filter>HTTP</Filter>
     </ClCompile>
     <ClCompile Include="BoostAsioServer.cpp">
-      <Filter>TestCase</Filter>
+      <Filter>Main</Filter>
     </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="RequestParser.cpp" />
+    <ClCompile Include="HttpServer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

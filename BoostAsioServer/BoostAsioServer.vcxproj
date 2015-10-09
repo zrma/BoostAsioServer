@@ -152,14 +152,30 @@
     <ClInclude Include="ChatClient.hpp" />
     <ClInclude Include="ChatMessage.hpp" />
     <ClInclude Include="ChatServer.hpp" />
+    <ClInclude Include="Connection.hpp" />
+    <ClInclude Include="ConnectionManager.hpp" />
     <ClInclude Include="DaytimeClient.hpp" />
+    <ClInclude Include="Header.hpp" />
+    <ClInclude Include="HttpServer.hpp" />
+    <ClInclude Include="MimeTypes.hpp" />
     <ClInclude Include="ReferenceCounted.hpp" />
+    <ClInclude Include="Reply.hpp" />
+    <ClInclude Include="Request.hpp" />
+    <ClInclude Include="RequestHandler.hpp" />
+    <ClInclude Include="RequestParser.hpp" />
     <ClInclude Include="Server.hpp" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BoostAsioServer.cpp" />
+    <ClCompile Include="Connection.cpp" />
+    <ClCompile Include="ConnectionManager.cpp" />
+    <ClCompile Include="HttpServer.cpp" />
+    <ClCompile Include="MimeTypes.cpp" />
+    <ClCompile Include="Reply.cpp" />
+    <ClCompile Include="RequestHandler.cpp" />
+    <ClCompile Include="RequestParser.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

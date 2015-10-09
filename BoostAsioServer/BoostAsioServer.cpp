@@ -16,6 +16,8 @@
 
 #include "DaytimeClient.hpp"
 
+#include "HttpServer.hpp"
+
 const char* ip = "127.0.0.1";
 const char* port = "9999";
 const char* port1 = "9001";
@@ -303,6 +305,26 @@ void DaytimeClientTest()
 	}
 }
 
+const char* http_ip = "127.0.0.1";
+const char* http_port = "9999";
+const char* http_root = "./Apps/";
+
+void HttpTest()
+{
+	try
+	{
+		// Initialise the server.
+		http::server::server s(http_ip, http_port, http_root);
+
+		// Run the server until stopped.
+		s.run();
+	}
+	catch (std::exception& e)
+	{
+		std::cerr << "exception: " << e.what() << "\n";
+	}
+}
+
 int main()
 {
 	// AllocationTest();
@@ -313,7 +335,9 @@ int main()
 	// AsyncUdpEchoTest();
 	// BlockingTcpEchoTest();
 	// BlockingUdpEchoTest();
-	DaytimeClientTest();
+	// DaytimeClientTest();
+
+	HttpTest();
 
 	return 0;
 }
