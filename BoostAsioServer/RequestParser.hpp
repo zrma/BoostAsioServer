@@ -13,11 +13,11 @@
 
 #include <tuple>
 
-namespace http
+namespace Http
 {
-	namespace server
+	namespace Server
 	{
-		struct request;
+		struct Request;
 
 		/// Parser for incoming requests.
 		class request_parser
@@ -37,7 +37,7 @@ namespace http
 			/// required. The InputIterator return value indicates how much of the input
 			/// has been consumed.
 			template <typename InputIterator>
-			std::tuple<result_type, InputIterator> parse(request& req,
+			std::tuple<result_type, InputIterator> parse(Request& req,
 				InputIterator begin, InputIterator end)
 			{
 				while (begin != end)
@@ -51,7 +51,7 @@ namespace http
 
 		private:
 			/// Handle the next character of input.
-			result_type consume(request& req, char input);
+			result_type consume(Request& req, char input);
 
 			/// Check if a byte is an HTTP character.
 			static bool is_char(int c);

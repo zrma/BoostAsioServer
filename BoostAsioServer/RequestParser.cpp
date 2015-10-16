@@ -12,9 +12,9 @@
 #include "RequestParser.hpp"
 #include "Request.hpp"
 
-namespace http
+namespace Http
 {
-	namespace server
+	namespace Server
 	{
 		request_parser::request_parser()
 			: state_(method_start)
@@ -26,7 +26,7 @@ namespace http
 			state_ = method_start;
 		}
 
-		request_parser::result_type request_parser::consume(request& req, char input)
+		request_parser::result_type request_parser::consume(Request& req, char input)
 		{
 			switch (state_)
 			{
@@ -38,7 +38,7 @@ namespace http
 				else
 				{
 					state_ = method;
-					req.method.push_back(input);
+					req.m_Method.push_back(input);
 					return indeterminate;
 				}
 			case method:
@@ -53,7 +53,7 @@ namespace http
 				}
 				else
 				{
-					req.method.push_back(input);
+					req.m_Method.push_back(input);
 					return indeterminate;
 				}
 			case uri:
@@ -68,7 +68,7 @@ namespace http
 				}
 				else
 				{
-					req.uri.push_back(input);
+					req.m_URI.push_back(input);
 					return indeterminate;
 				}
 			case http_version_h:
@@ -114,8 +114,8 @@ namespace http
 			case http_version_slash:
 				if (input == '/')
 				{
-					req.http_version_major = 0;
-					req.http_version_minor = 0;
+					req.m_HttpVersionMajor = 0;
+					req.m_HttpVersionMinor = 0;
 					state_ = http_version_major_start;
 					return indeterminate;
 				}
@@ -126,7 +126,7 @@ namespace http
 			case http_version_major_start:
 				if (is_digit(input))
 				{
-					req.http_version_major = req.http_version_major * 10 + input - '0';
+					req.m_HttpVersionMajor = req.m_HttpVersionMajor * 10 + input - '0';
 					state_ = http_version_major;
 					return indeterminate;
 				}
@@ -142,7 +142,7 @@ namespace http
 				}
 				else if (is_digit(input))
 				{
-					req.http_version_major = req.http_version_major * 10 + input - '0';
+					req.m_HttpVersionMajor = req.m_HttpVersionMajor * 10 + input - '0';
 					return indeterminate;
 				}
 				else
@@ -152,7 +152,7 @@ namespace http
 			case http_version_minor_start:
 				if (is_digit(input))
 				{
-					req.http_version_minor = req.http_version_minor * 10 + input - '0';
+					req.m_HttpVersionMinor = req.m_HttpVersionMinor * 10 + input - '0';
 					state_ = http_version_minor;
 					return indeterminate;
 				}
@@ -168,7 +168,7 @@ namespace http
 				}
 				else if (is_digit(input))
 				{
-					req.http_version_minor = req.http_version_minor * 10 + input - '0';
+					req.m_HttpVersionMinor = req.m_HttpVersionMinor * 10 + input - '0';
 					return indeterminate;
 				}
 				else
@@ -191,7 +191,7 @@ namespace http
 					state_ = expecting_newline_3;
 					return indeterminate;
 				}
-				else if (!req.headers.empty() && (input == ' ' || input == '\t'))
+				else if (!req.m_Headers.empty() && (input == ' ' || input == '\t'))
 				{
 					state_ = header_lws;
 					return indeterminate;
@@ -202,8 +202,8 @@ namespace http
 				}
 				else
 				{
-					req.headers.push_back(header());
-					req.headers.back().name.push_back(input);
+					req.m_Headers.push_back(Header());
+					req.m_Headers.back().m_Name.push_back(input);
 					state_ = header_name;
 					return indeterminate;
 				}
@@ -224,7 +224,7 @@ namespace http
 				else
 				{
 					state_ = header_value;
-					req.headers.back().value.push_back(input);
+					req.m_Headers.back().m_Value.push_back(input);
 					return indeterminate;
 				}
 			case header_name:
@@ -239,7 +239,7 @@ namespace http
 				}
 				else
 				{
-					req.headers.back().name.push_back(input);
+					req.m_Headers.back().m_Name.push_back(input);
 					return indeterminate;
 				}
 			case space_before_header_value:
@@ -264,7 +264,7 @@ namespace http
 				}
 				else
 				{
-					req.headers.back().value.push_back(input);
+					req.m_Headers.back().m_Value.push_back(input);
 					return indeterminate;
 				}
 			case expecting_newline_2:

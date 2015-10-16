@@ -314,10 +314,10 @@ void HttpTest()
 	try
 	{
 		// Initialise the server.
-		http::server::server s(http_ip, http_port, http_root);
+		Http::Server::Server s(http_ip, http_port, http_root);
 
 		// Run the server until stopped.
-		s.run();
+		s.Run();
 	}
 	catch (std::exception& e)
 	{

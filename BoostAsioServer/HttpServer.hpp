@@ -17,49 +17,50 @@
 #include "connectionManager.hpp"
 #include "RequestHandler.hpp"
 
-namespace http
+namespace Http
 {
-	namespace server
+	namespace Server
 	{
 		/// The top-level class of the HTTP server.
-		class server
+		class Server
 		{
 		public:
-			server(const server&) = delete;
-			server& operator=(const server&) = delete;
+			// 일반 대입 복사 생성자 명시적으로 삭제
+			Server(const Server&) = delete;
+			Server& operator=(const Server&) = delete;
 
 			/// Construct the server to listen on the specified TCP address and port, and
 			/// serve up files from the given directory.
-			explicit server(const std::string& address, const std::string& port,
-				const std::string& doc_root);
+			// IP + Port + 경로 데이터가 모두 명시적으로 필요함!
+			explicit Server(const std::string& address, const std::string& port, const std::string& doc_root);
 
 			/// Run the server's io_service loop.
-			void run();
+			void Run();
 
 		private:
 			/// Perform an asynchronous accept operation.
-			void do_accept();
+			void DoAccept();
 
 			/// Wait for a request to stop the server.
-			void do_await_stop();
+			void DoAwaitStop();
 
 			/// The io_service used to perform asynchronous operations.
-			boost::asio::io_service io_service_;
+			boost::asio::io_service m_IOService;
 
 			/// The signal_set is used to register for process termination notifications.
-			boost::asio::signal_set signals_;
+			boost::asio::signal_set m_Signals;
 
 			/// Acceptor used to listen for incoming connections.
-			boost::asio::ip::tcp::acceptor acceptor_;
+			boost::asio::ip::tcp::acceptor m_Acceptor;
+			
+			/// The next socket to be accepted.
+			boost::asio::ip::tcp::socket m_Socket;
 
 			/// The connection manager which owns all live connections.
-			connection_manager connection_manager_;
-
-			/// The next socket to be accepted.
-			boost::asio::ip::tcp::socket socket_;
+			ConnectionManager m_ConnectionManager;
 
 			/// The handler for all incoming requests.
-			request_handler request_handler_;
+			RequestHandler m_RequestHandler;
 		};
 
 	} // namespace server

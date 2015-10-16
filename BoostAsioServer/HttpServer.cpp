@@ -13,82 +13,85 @@
 #include <signal.h>
 #include <utility>
 
-namespace http
+namespace Http
 {
-	namespace server
+	namespace Server
 	{
-		server::server(const std::string& address, const std::string& port,
+		Server::Server(const std::string& address, const std::string& port,
 			const std::string& doc_root)
-			: io_service_(),
-			signals_(io_service_),
-			acceptor_(io_service_),
-			connection_manager_(),
-			socket_(io_service_),
-			request_handler_(doc_root)
+			: m_IOService(), m_Signals(m_IOService),
+			m_Acceptor(m_IOService), m_Socket(m_IOService),
+			m_ConnectionManager(), m_RequestHandler(doc_root)
 		{
 			// Register to handle the signals that indicate when the server should exit.
 			// It is safe to register for the same signal multiple times in a program,
 			// provided all registration for the specified signal is made through Asio.
-			signals_.add(SIGINT);
-			signals_.add(SIGTERM);
-#if defined(SIGQUIT)
-			signals_.add(SIGQUIT);
-#endif // defined(SIGQUIT)
+			m_Signals.add(SIGINT);
+			m_Signals.add(SIGTERM);
 
-			do_await_stop();
+			#if defined(SIGQUIT)
+			{
+				m_Signals.add(SIGQUIT);
+			}
+			#endif // defined(SIGQUIT)
+
+			// async_wait 를 미리 걸어둔다 - 시그널 대기용도
+			DoAwaitStop();
 
 			// Open the acceptor with the option to reuse the address (i.e. SO_REUSEADDR).
-			boost::asio::ip::tcp::resolver resolver(io_service_);
+			boost::asio::ip::tcp::resolver resolver(m_IOService);
 			boost::asio::ip::tcp::endpoint endpoint = *resolver.resolve({ address, port });
-			acceptor_.open(endpoint.protocol());
-			acceptor_.set_option(boost::asio::ip::tcp::acceptor::reuse_address(true));
-			acceptor_.bind(endpoint);
-			acceptor_.listen();
+			m_Acceptor.open(endpoint.protocol());
+			m_Acceptor.set_option(boost::asio::ip::tcp::acceptor::reuse_address(true));
+			m_Acceptor.bind(endpoint);
+			m_Acceptor.listen();
 
-			do_accept();
+			DoAccept();
 		}
 
-		void server::run()
+		void Server::Run()
 		{
 			// The io_service::run() call will block until all asynchronous operations
 			// have finished. While the server is running, there is always at least one
 			// asynchronous operation outstanding: the asynchronous accept call waiting
 			// for new incoming connections.
-			io_service_.run();
+			m_IOService.run();
 		}
 
-		void server::do_accept()
+		void Server::DoAccept()
 		{
-			acceptor_.async_accept(socket_,
+			// Accept 콜백
+			m_Acceptor.async_accept(m_Socket,
 				[this](boost::system::error_code ec)
 			{
 				// Check whether the server was stopped by a signal before this
 				// completion handler had a chance to run.
-				if (!acceptor_.is_open())
+				if (!m_Acceptor.is_open())
 				{
 					return;
 				}
 
 				if (!ec)
 				{
-					connection_manager_.start(std::make_shared<connection>(
-						std::move(socket_), connection_manager_, request_handler_));
+					m_ConnectionManager.Start(std::make_shared<Connection>(
+						std::move(m_Socket), m_ConnectionManager, m_RequestHandler));
 				}
 
-				do_accept();
+				DoAccept();
 			});
 		}
 
-		void server::do_await_stop()
+		void Server::DoAwaitStop()
 		{
-			signals_.async_wait(
+			// 비동기로 시그널에 대해 콜백 걸어둔다 - 콜백 호출되면 Acceptor와 ConnectionManager 닫고 정리
+			m_Signals.async_wait(
 				[this](boost::system::error_code /*ec*/, int /*signo*/)
 			{
 				// The server is stopped by cancelling all outstanding asynchronous
 				// operations. Once all operations have finished the io_service::run()
 				// call will exit.
-				acceptor_.close();
-				connection_manager_.stop_all();
+				m_Acceptor.close();
+				m_ConnectionManager.StopAll();
 			});
 		}
 

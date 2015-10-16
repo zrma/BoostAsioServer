@@ -15,18 +15,18 @@
 #include <vector>
 #include "Header.hpp"
 
-namespace http
+namespace Http
 {
-	namespace server
+	namespace Server
 	{
 		/// A request received from a client.
-		struct request
+		struct Request
 		{
-			std::string method;
-			std::string uri;
-			int http_version_major;
-			int http_version_minor;
-			std::vector<header> headers;
+			std::string m_Method;
+			std::string m_URI;
+			int m_HttpVersionMajor;
+			int m_HttpVersionMinor;
+			std::vector<Header> m_Headers;
 		};
 
 	} // namespace server

@@ -11,31 +11,31 @@
 #include "stdafx.h"
 #include "ConnectionManager.hpp"
 
-namespace http
+namespace Http
 {
-	namespace server
+	namespace Server
 	{
-		connection_manager::connection_manager()
+		ConnectionManager::ConnectionManager()
 		{
 		}
 
-		void connection_manager::start(connection_ptr c)
+		void ConnectionManager::Start(ConnectionPtr c)
 		{
-			connections_.insert(c);
-			c->start();
+			m_Connections.insert(c);
+			c->Start();
 		}
 
-		void connection_manager::stop(connection_ptr c)
+		void ConnectionManager::Stop(ConnectionPtr c)
 		{
-			connections_.erase(c);
-			c->stop();
+			m_Connections.erase(c);
+			c->Stop();
 		}
 
-		void connection_manager::stop_all()
+		void ConnectionManager::StopAll()
 		{
-			for (auto c : connections_)
-				c->stop();
-			connections_.clear();
+			for (auto c : m_Connections)
+				c->Stop();
+			m_Connections.clear();
 		}
 
 	} // namespace server

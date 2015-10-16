@@ -17,22 +17,22 @@
 #include "Reply.hpp"
 #include "Request.hpp"
 
-namespace http
+namespace Http
 {
-	namespace server
+	namespace Server
 	{
-		request_handler::request_handler(const std::string& doc_root)
-			: doc_root_(doc_root)
+		RequestHandler::RequestHandler(const std::string& doc_root)
+			: m_DocumentRoot(doc_root)
 		{
 		}
 
-		void request_handler::handle_request(const request& req, reply& rep)
+		void RequestHandler::HandleRequest(const Request& req, Reply& rep)
 		{
 			// Decode url to path.
 			std::string request_path;
-			if (!url_decode(req.uri, request_path))
+			if (!DecodeURL(req.m_URI, request_path))
 			{
-				rep = reply::stock_reply(reply::bad_request);
+				rep = Reply::StockReply(Reply::ST_BAD_REQUEST);
 				return;
 			}
 
@@ -40,7 +40,7 @@ namespace http
 			if (request_path.empty() || request_path[0] != '/'
 				|| request_path.find("..") != std::string::npos)
 			{
-				rep = reply::stock_reply(reply::bad_request);
+				rep = Reply::StockReply(Reply::ST_BAD_REQUEST);
 				return;
 			}
 
@@ -60,27 +60,27 @@ namespace http
 			}
 
 			// Open the file to send back.
-			std::string full_path = doc_root_ + request_path;
+			std::string full_path = m_DocumentRoot + request_path;
 			std::ifstream is(full_path.c_str(), std::ios::in | std::ios::binary);
 			if (!is)
 			{
-				rep = reply::stock_reply(reply::not_found);
+				rep = Reply::StockReply(Reply::ST_NOT_FOUND);
 				return;
 			}
 
 			// Fill out the reply to be sent to the client.
-			rep.status = reply::ok;
+			rep.m_Status = Reply::ST_OK;
 			char buf[512];
 			while (is.read(buf, sizeof(buf)).gcount() > 0)
-				rep.content.append(buf, is.gcount());
-			rep.headers.resize(2);
-			rep.headers[0].name = "Content-Length";
-			rep.headers[0].value = std::to_string(rep.content.size());
-			rep.headers[1].name = "Content-Type";
-			rep.headers[1].value = mime_types::extension_to_type(extension);
+				rep.m_Content.append(buf, is.gcount());
+			rep.m_Headers.resize(2);
+			rep.m_Headers[0].m_Name = "Content-Length";
+			rep.m_Headers[0].m_Value = std::to_string(rep.m_Content.size());
+			rep.m_Headers[1].m_Name = "Content-Type";
+			rep.m_Headers[1].m_Value = MimeTypes::ExtensionToType(extension);
 		}
 
-		bool request_handler::url_decode(const std::string& in, std::string& out)
+		bool RequestHandler::DecodeURL(const std::string& in, std::string& out)
 		{
 			out.clear();
 			out.reserve(in.size());

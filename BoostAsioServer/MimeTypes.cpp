@@ -11,17 +11,17 @@
 #include "stdafx.h"
 #include "MimeTypes.hpp"
 
-namespace http
+namespace Http
 {
-	namespace server
+	namespace Server
 	{
-		namespace mime_types
+		namespace MimeTypes
 		{
-			struct mapping
+			struct Mapping
 			{
-				const char* extension;
-				const char* mime_type;
-			} mappings[] =
+				const char* m_Extension;
+				const char* m_MimeType;
+			} m_Mappings[] =
 			{
 				{ "gif", "image/gif" },
 				{ "htm", "text/html" },
@@ -30,13 +30,13 @@ namespace http
 				{ "png", "image/png" }
 			};
 
-			std::string extension_to_type(const std::string& extension)
+			std::string ExtensionToType(const std::string& extension)
 			{
-				for (mapping m : mappings)
+				for (Mapping m : m_Mappings)
 				{
-					if (m.extension == extension)
+					if (m.m_Extension == extension)
 					{
-						return m.mime_type;
+						return m.m_MimeType;
 					}
 				}
 

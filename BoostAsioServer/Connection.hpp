@@ -19,60 +19,60 @@
 #include "RequestHandler.hpp"
 #include "RequestParser.hpp"
 
-namespace http
+namespace Http
 {
-	namespace server 
+	namespace Server 
 	{
-		class connection_manager;
+		class ConnectionManager;
 
 		/// Represents a single connection from a client.
-		class connection
-			: public std::enable_shared_from_this<connection>
+		class Connection
+			: public std::enable_shared_from_this<Connection>
 		{
 		public:
-			connection(const connection&) = delete;
-			connection& operator=(const connection&) = delete;
+			Connection(const Connection&) = delete;
+			Connection& operator=(const Connection&) = delete;
 
 			/// Construct a connection with the given socket.
-			explicit connection(boost::asio::ip::tcp::socket socket,
-				connection_manager& manager, request_handler& handler);
+			explicit Connection(boost::asio::ip::tcp::socket socket,
+				ConnectionManager& manager, RequestHandler& handler);
 
 			/// Start the first asynchronous operation for the connection.
-			void start();
+			void Start();
 
 			/// Stop all asynchronous operations associated with the connection.
-			void stop();
+			void Stop();
 
 		private:
 			/// Perform an asynchronous read operation.
-			void do_read();
+			void DoRead();
 
 			/// Perform an asynchronous write operation.
-			void do_write();
+			void DoWrite();
 
 			/// Socket for the connection.
-			boost::asio::ip::tcp::socket socket_;
+			boost::asio::ip::tcp::socket m_Socket;
 
 			/// The manager for this connection.
-			connection_manager& connection_manager_;
+			ConnectionManager& m_ConnectionManager;
 
 			/// The handler used to process the incoming request.
-			request_handler& request_handler_;
+			RequestHandler& m_RequestHandler;
 
 			/// Buffer for incoming data.
-			std::array<char, 8192> buffer_;
+			std::array<char, 8192> m_Buffer;
 
 			/// The incoming request.
-			request request_;
+			Request m_Request;
 
 			/// The parser for the incoming request.
-			request_parser request_parser_;
+			request_parser m_RequestParser;
 
 			/// The reply to be sent back to the client.
-			reply reply_;
+			Reply m_Reply;
 		};
 
-		typedef std::shared_ptr<connection> connection_ptr;
+		typedef std::shared_ptr<Connection> ConnectionPtr;
 
 	} // namespace server
 } // namespace http
