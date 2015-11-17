@@ -85,8 +85,12 @@
     <ClInclude Include="targetver.h">
       <Filter>Main</Filter>
     </ClInclude>
-    <ClInclude Include="RequestParser.hpp" />
-    <ClInclude Include="HttpServer.hpp" />
+    <ClInclude Include="HttpServer.hpp">
+      <Filter>HTTP</Filter>
+    </ClInclude>
+    <ClInclude Include="RequestParser.hpp">
+      <Filter>HTTP</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Connection.cpp">
@@ -110,8 +114,12 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Main</Filter>
     </ClCompile>
-    <ClCompile Include="RequestParser.cpp" />
-    <ClCompile Include="HttpServer.cpp" />
+    <ClCompile Include="HttpServer.cpp">
+      <Filter>HTTP</Filter>
+    </ClCompile>
+    <ClCompile Include="RequestParser.cpp">
+      <Filter>HTTP</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

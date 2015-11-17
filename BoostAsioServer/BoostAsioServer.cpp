@@ -305,7 +305,7 @@ void DaytimeClientTest()
 	}
 }
 
-const char* http_ip = "127.0.0.1";
+const char* http_ip = "0.0.0.0";
 const char* http_port = "9999";
 const char* http_root = "./Apps/";
 
